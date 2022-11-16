@@ -28,9 +28,6 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     cursorX += -10
     drawGrid()
 })
-function countNeighbors2 (currentRow: number, currentCol: number) {
-	
-}
 function copyBottom () {
     return grid[11]
 }
