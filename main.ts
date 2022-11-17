@@ -11,6 +11,10 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     cursorY += -10
     drawGrid()
 })
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    updateGrid()
+    drawGrid()
+})
 function countNeighborsBottomLeft () {
     neighborCount = 0
     neighborCount += grid[11 - 0][0 + 1]
@@ -63,6 +67,26 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     cursorX += 10
     drawGrid()
 })
+function updateGrid () {
+    nextGrid = []
+    for (let row = 0; row <= 11; row++) {
+        nextGrid.push([])
+        for (let column = 0; column <= 15; column++) {
+            currentCellAliveorDead = grid[row][column]
+            currentCellNeighbors = countNeighbors(row, column)
+            if (currentCellAliveorDead == 1 && currentCellNeighbors < 2) {
+                nextGrid[row].push(0)
+            } else if (currentCellAliveorDead == 1 && currentCellNeighbors > 3) {
+                nextGrid[row].push(0)
+            } else if (currentCellAliveorDead == 0 && currentCellNeighbors == 3) {
+                nextGrid[row].push(1)
+            } else {
+                nextGrid[row].push(currentCellAliveorDead)
+            }
+        }
+    }
+    grid = nextGrid
+}
 function drawGrid () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     gridSprites = []
@@ -157,9 +181,9 @@ function countNeighbors (currentRow: number, currentCol: number) {
         return countNeighborsWrapTop(currentRow, currentCol)
     } else if (currentRow == 11) {
         return countNeighborsWrapBottom(currentRow, currentCol)
-    } else if (cursorGridCol == 0) {
+    } else if (currentCol == 0) {
         return countNeighborsWrapLeft(currentRow, currentCol)
-    } else if (cursorGridCol == 15) {
+    } else if (currentCol == 15) {
         return countNeighborsWrapRight(currentRow, currentCol)
     } else {
         neighborCount += grid[currentRow - 1][currentCol - 1]
@@ -222,6 +246,9 @@ let gridSprite: Sprite = null
 let currentX = 0
 let currentY = 0
 let gridSprites: Sprite[] = []
+let currentCellNeighbors = 0
+let currentCellAliveorDead = 0
+let nextGrid: number[][] = []
 let neighborCount = 0
 let neighborCountSprite: TextSprite = null
 let cursorY = 0
