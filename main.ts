@@ -11,6 +11,9 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     cursorY += -10
     drawGrid()
 })
+function autoOff () {
+    autoFlag = 0
+}
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     updateGrid()
     drawGrid()
@@ -57,6 +60,9 @@ function copyBottom () {
 }
 function copyRight (whichRow: number) {
     return grid[whichRow][15]
+}
+function autoOn () {
+    autoFlag = 1
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     if (cursorGridCol == 15) {
@@ -218,6 +224,13 @@ function countNeighborsTopRight () {
     neighborCount += copyBottom()[14]
     return neighborCount
 }
+controller.menu.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (game.ask("Auto Update? (A)", "No Auto Update (B)")) {
+        autoOn()
+    } else {
+        autoOff()
+    }
+})
 function copyLeft (whichRow: number) {
     return grid[whichRow][0]
 }
@@ -250,6 +263,7 @@ let currentCellNeighbors = 0
 let currentCellAliveorDead = 0
 let nextGrid: number[][] = []
 let neighborCount = 0
+let autoFlag = 0
 let neighborCountSprite: TextSprite = null
 let cursorY = 0
 let cursorX = 0
@@ -284,3 +298,10 @@ cursor.z = 10
 neighborCountSprite = textsprite.create("")
 neighborCountSprite.z = 10
 drawGrid()
+autoOff()
+game.onUpdateInterval(200, function () {
+    if (autoFlag == 1) {
+        updateGrid()
+        drawGrid()
+    }
+})
